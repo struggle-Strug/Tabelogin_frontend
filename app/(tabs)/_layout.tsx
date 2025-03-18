@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import {
   Entypo,
   MaterialCommunityIcons,
-  FontAwesome,
+  FontAwesome5,
 } from "@expo/vector-icons";
 
 export default function TabsLayout() {
@@ -13,12 +13,6 @@ export default function TabsLayout() {
         tabBarActiveTintColor: "#343434",
       }}
     >
-      <Tabs.Screen
-        name="mypage"
-        options={{
-          href: null, // 👈 This hides the tab from the bottom tab bar!
-        }}
-      />
       <Tabs.Screen
         name="home"
         options={{
@@ -43,6 +37,15 @@ export default function TabsLayout() {
           tabBarLabel: "投稿",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="plus-box" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="mypage"
+        options={{
+          tabBarLabel: "マイページ",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5 name="user-circle" size={24} color={color} />
           ),
         }}
       />

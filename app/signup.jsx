@@ -32,7 +32,6 @@ const signup = () => {
       userData
     );
     if (response.data.error) return;
-    console.log("token for register", response.data.token);
 
     // After signup, go to the dashboard
     await saveToken(response.data.token); // ✅ Save token securely

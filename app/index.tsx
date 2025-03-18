@@ -31,11 +31,11 @@ const App = () => {
   };
   const checkLogin = async () => {
     const token = await getToken();
-    console.log("token in APP", token);
 
     if (token) {
       axios.defaults.headers.common["Authorization"] = token;
       getUserData();
+      // router.replace("/home");
     } else if (
       !token &&
       pathname !== "/" &&

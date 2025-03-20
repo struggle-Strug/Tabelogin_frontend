@@ -1,43 +1,103 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
+import ImageViewer from "@/components/ImageViewer";
+import womanAvatar from "@/assets/images/womanAvatar02.png";
+import manAvatar from "@/assets/images/manAvatar02.png";
+import editImage from "@/assets/images/editImage.png"; // Edit image
+import logoImage from "@/assets/images/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function MyPage() {
   const { user } = useAuth();
-  console.log(user);
+  const imageArray = [
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+  ];
+
+  // Render function for each image in the FlatList
+  const renderItem = ({ item }) => {
+    return (
+      <View className="w-1/3">
+        <ImageViewer
+          imgSource={{ uri: item }}
+          imageStyle={{ width: "100%", height: 150 }}
+        />
+      </View>
+    );
+  };
 
   return (
-    <View className="flex-1 relative p-4">
-      <Text className="absolute bg-white top-0 right-2 text-2xl text-center border-2 border-[#343434] mx-auto mt-8 z-10">
-        ユーザー
-      </Text>
-      <Text className="text-2xl text-center px-8 py-4 border-2 border-[#343434] w-[80%] mx-auto mt-8">
-        食べログ×インスタ
-      </Text>
-      <View className="flex flex-row justify-center gap-4 p-8">
-        <View className="flex flex-col items-center w-1/3">
-          <View className="rounded-full min-h-24 aspect-[1/1] border-2 border-[#343434]"></View>
-          <CustomButton
-            onPress={() => router.push("/mypage/edit")}
-            title="編集"
-            textStyles="text-lg text-center border-2 border-[#343434] mt-2 px-2"
-          />
+    <View className="flex-1 justify-start">
+      <View className="mt-12 flex flex-row justify-center">
+        <ImageViewer
+          imgSource={logoImage}
+          imageStyle={{ width: 60, height: 60 }}
+        />
+      </View>
+      <View className="flex-row items-start gap-3 p-6">
+        <View className="relative">
+          {/* Make the entire Avatar clickable */}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => router.push("/mypage/edit")} // Replace with navigation to edit page
+          >
+            <ImageViewer
+              imgSource={manAvatar}
+              imageStyle={{ width: 60, height: 60, borderRadius: 30 }} // Round avatar
+            />
+
+            {/* Edit Icon on top of Avatar */}
+            <View className="absolute bottom-0 right-0 bg-white rounded-full p-1">
+              <ImageViewer
+                imgSource={editImage}
+                imageStyle={{ width: 20, height: 20 }} // Size of the edit icon
+              />
+            </View>
+          </TouchableOpacity>
         </View>
-        <View className="flex flex-col items-start gap-2 w-2/3">
-          <Text className="text-lg text-center border-2 border-[#343434] w-[50%]">
-            名前
-          </Text>
-          <Text className="text-lg text-center border-2 border-[#343434] px-2">
-            性別
-          </Text>
+        <View className="flex-col pt-2 gap-2">
+          <Text className="text-base font-bold">taro yamada</Text>
+          <View className="flex-row items-center">
+            <Text className="font-bold text-lg text-black">9 </Text>
+            <Text className="text-base text-[#343434]">投稿</Text>
+            <View className="w-4" />
+            <Text className="font-bold text-lg text-black">11 </Text>
+            <Text className="text-base text-[#343434]">フォロワー</Text>
+            <View className="w-4" />
+            <Text className="font-bold text-lg text-black">13 </Text>
+            <Text className="text-base text-[#343434]">フォロー中</Text>
+          </View>
         </View>
       </View>
-      <View>
-        <Text className="text-2xl text-center px-8 py-4 border-2 border-[#343434] w-[50%] mx-auto mt-8">
-          自己紹介
+      <View className="px-6">
+        <Text className="text-base text-center border-[#343434] py-4">
+          自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。
         </Text>
+        <CustomButton
+          onPress={() => router.push("/mypage/edit")}
+          title="プロフィールを編集"
+          iconName="edit-2" // Pass the desired icon name (from Feather or other libraries)
+          containerStyles="rounded-full border-2 border-[#343434] px-4 py-2 mt-4"
+          textStyles="text-[#343434] text-center"
+        />
       </View>
+
+      {/* FlatList for Images */}
+      <FlatList
+        data={imageArray}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={3} // Display images in 3 columns
+        contentContainerStyle={{ paddingHorizontal: 0 }}
+      />
     </View>
   );
 }

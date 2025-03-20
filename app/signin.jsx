@@ -36,7 +36,7 @@ const signin = () => {
     // After signup, go to the dashboard
     await saveToken(response.data.token); // ✅ Save token securely
     await setUser(response.data.user);
-    router.replace("/home"); // ✅ Navigate after login
+    router.replace("/mypage"); // ✅ Navigate after login
   };
   return (
     <View className="flex-1 justify-start p-4">

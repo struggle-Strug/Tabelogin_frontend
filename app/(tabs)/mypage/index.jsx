@@ -50,7 +50,7 @@ export default function MyPage() {
             onPress={() => router.push("/mypage/edit")} // Replace with navigation to edit page
           >
             <ImageViewer
-              imgSource={manAvatar}
+              imgSource={user?.image ? { uri: user?.image } : manAvatar}
               imageStyle={{ width: 60, height: 60, borderRadius: 30 }} // Round avatar
             />
 
@@ -77,7 +77,7 @@ export default function MyPage() {
           </View>
         </View>
       </View>
-      <View className="px-6">
+      <View className="px-6 mb-4">
         <Text className="text-base text-center border-[#343434] py-4">
           自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。
         </Text>

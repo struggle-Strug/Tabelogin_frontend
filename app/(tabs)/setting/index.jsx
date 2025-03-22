@@ -1,37 +1,74 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { router } from "expo-router";
+import Feather from "@expo/vector-icons/Feather";
 import CustomButton from "@/components/CustomButton";
+import { removeToken } from "@/utils/secureStore";
 
 const setting = () => {
+  const handleLogout = async () => {
+    await removeToken();
+    router.replace("/signin");
+  };
   return (
-    <View className="flex-1 relative p-4">
-      <Text className="absolute bg-white top-0 right-2 text-2xl text-center border-2 border-[#343434] mx-auto mt-8 z-10">
-        ユーザー
-      </Text>
-      <Text className="text-2xl text-center px-8 py-4 border-2 border-[#343434] w-[80%] mx-auto mt-8">
-        食べログ×インスタ
-      </Text>
-      <CustomButton
-        onPress={() => {}}
-        title="お知らせ"
-        textStyles="text-2xl text-center px-8 py-4 border-2 border-[#343434] w-[80%] mx-auto mt-8"
-      />
-      <CustomButton
-        onPress={() => {}}
-        title="プロフィール編集"
-        textStyles="text-2xl text-center px-8 py-4 border-2 border-[#343434] w-[80%] mx-auto mt-8"
-      />
-      <CustomButton
-        onPress={() => router.push("/dashboard")}
-        title="ログアウト"
-        textStyles="text-2xl text-center px-8 py-4 border-2 border-[#343434] w-[80%] mx-auto mt-8"
-      />
-      <CustomButton
-        onPress={() => router.push("/help")}
-        title="ヘルプ"
-        textStyles="text-2xl text-center px-8 py-4 border-2 border-[#343434] w-[80%] mx-auto mt-8"
-      />
+    <View className="flex-1 p-4">
+      <View className="w-full flex-row justify-start p-6 border-b-[0.5px]">
+        <CustomButton
+          onPress={() => router.back()}
+          title=""
+          iconName="chevron-left"
+        />
+        <View className="w-[80%] flex-row justify-center items-center gap-2">
+          <Feather name="settings" size={20} color="black" />
+          <Text className="text-xl font-bold text-[#343434]">設定</Text>
+        </View>
+      </View>
+      <View className="p-4">
+        <TouchableOpacity onPress={() => {}}>
+          <View className="flex-row justify-between items-center py-3">
+            <View className="flex-row gap-2">
+              <Feather name="bell" size={24} color="#343434" />
+              <Text className="text-xl text-center border-[#343434]">
+                お知らせ
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={24} color="#343434" />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/mypage/edit")}>
+          <View className="flex-row justify-between items-center py-3">
+            <View className="flex-row gap-2">
+              <Feather name="edit-2" size={24} color="#343434" />
+              <Text className="text-xl text-center border-[#343434]">
+                プロフィール編集
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={24} color="#343434" />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}}>
+          <View className="flex-row justify-between items-center py-3">
+            <View className="flex-row gap-2">
+              <Feather name="headphones" size={24} color="#343434" />
+              <Text className="text-xl text-center border-[#343434]">
+                ヘルプ
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={24} color="#343434" />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleLogout}>
+          <View className="flex-row justify-between items-center py-3">
+            <View className="flex-row gap-2">
+              <Feather name="log-out" size={24} color="#343434" />
+              <Text className="text-xl text-center border-[#343434]">
+                ログアウト
+              </Text>
+            </View>
+            <Feather name="chevron-right" size={24} color="#343434" />
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

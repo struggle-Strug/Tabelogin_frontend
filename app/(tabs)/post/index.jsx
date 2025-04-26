@@ -33,12 +33,12 @@ const Post = () => {
   const cameraRef = useRef(null);
 
   const imageArray = [
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/9662135f-2963-4398-a549-4e228ff9adb2.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/9662135f-2963-4398-a549-4e228ff9adb2.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/9662135f-2963-4398-a549-4e228ff9adb2.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/9662135f-2963-4398-a549-4e228ff9adb2.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/9662135f-2963-4398-a549-4e228ff9adb2.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/9662135f-2963-4398-a549-4e228ff9adb2.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
   ];
 
   const handleNext = () => {
@@ -63,7 +63,6 @@ const Post = () => {
   };
 
   const fetchImages = async () => {
-    console.log("fetch function works");
     const result = await MediaLibrary.getAssetsAsync({ photo });
     // setImageArray(result);
   };

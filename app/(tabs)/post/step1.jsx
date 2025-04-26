@@ -8,7 +8,6 @@ const Step1 = ({ imageArray, renderItem, setCaptureState }) => {
       <View className="flex-row justify-end p-2">
         <CustomButton onPress={() => setCaptureState(true)} iconName="camera" />
       </View>
-      // Conditionally render FlatList for Images
       <FlatList
         data={imageArray}
         renderItem={renderItem}

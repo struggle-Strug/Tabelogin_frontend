@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { useLocalSearchParams } from "expo-router";
 import { router } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import ImageViewer from "@/components/ImageViewer";
@@ -10,9 +11,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-export default function MyPage() {
-  const { user } = useAuth();
+const userProfile = () => {
+  const { id } = useLocalSearchParams();
   const [imageArray, setImageArray] = useState([]);
+  const [user, setUser] = useState();
 
   // Render function for each image in the FlatList
   const renderItem = ({ item }) => {
@@ -29,7 +31,7 @@ export default function MyPage() {
   const getImages = async () => {
     try {
       const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/post/images/${user?.id}`
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/post/images/${id}`
       );
       if (response.data.error) return;
       setImageArray(response.data);
@@ -39,8 +41,22 @@ export default function MyPage() {
     }
   };
 
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/user/${id}`
+      );
+      if (response.data.error) return;
+      setUser(response.data);
+    } catch {
+      console.error("Error uploading image:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     getImages();
+    getUserData();
   }, []);
   return (
     <View className="flex-1 justify-start">
@@ -90,11 +106,12 @@ export default function MyPage() {
           自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。
         </Text>
         <CustomButton
-          onPress={() => router.push("/mypage/edit")}
-          title="プロフィールを編集"
-          iconName="edit-2" // Pass the desired icon name (from Feather or other libraries)
-          containerStyles="rounded-full border-2 border-[#343434] px-4 py-2 mt-4"
-          textStyles="text-[#343434] text-center"
+          onPress={() => {}}
+          title="フォロー"
+          iconColor="white"
+          iconName="user-plus" // Pass the desired icon name (from Feather or other libraries)
+          containerStyles="rounded-full border-2 border-[#343434] px-4 py-2 mt-4 bg-black"
+          textStyles="text-white text-center"
         />
       </View>
 
@@ -108,4 +125,6 @@ export default function MyPage() {
       />
     </View>
   );
-}
+};
+
+export default userProfile;

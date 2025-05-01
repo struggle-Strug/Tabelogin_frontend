@@ -6,8 +6,10 @@ import ImageViewer from "@/components/ImageViewer";
 import AddComment from "@/app/(tabs)/home/addComment";
 import { router } from "expo-router";
 import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Home = () => {
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   // Track which post's modal is open
@@ -15,7 +17,7 @@ const Home = () => {
   const [commentModalVisible, setCommentModalVisible] = useState(false);
 
   const logoImage = require("@/assets/images/logo.png");
-  const womanAvatar = require("@/assets/images/womanAvatar.png");
+  const manAvatar = require("@/assets/images/manAvatar.png");
   const postImage = require("@/assets/images/postImage.png");
 
   const getPosts = async () => {
@@ -29,6 +31,14 @@ const Home = () => {
       console.error("Error fetching posts:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const goToUserProfilePage = (userId) => {
+    if (userId === user?.id) {
+      router.push("/mypage");
+    } else {
+      router.push(`/mypage/${userId}`);
     }
   };
 
@@ -59,13 +69,17 @@ const Home = () => {
         <View className="flex-col gap-4">
           {posts?.map((p, index) => (
             <View key={p.id || index}>
-              <View className="flex flex-row items-center gap-2 px-6">
-                <ImageViewer
-                  imgSource={{ uri: p.user.avatar }}
-                  imageStyle={{ width: 32, height: 32, borderRadius: 9999 }}
-                />
-                <Text className="text-base font-bold">{p.user.name}</Text>
-              </View>
+              <TouchableOpacity onPress={() => goToUserProfilePage(p.user.id)}>
+                <View className="flex flex-row items-center gap-2 px-6">
+                  <ImageViewer
+                    imgSource={
+                      p.user.avatar ? { uri: p.user.avatar } : manAvatar
+                    }
+                    imageStyle={{ width: 32, height: 32, borderRadius: 9999 }}
+                  />
+                  <Text className="text-base font-bold">{p.user.name}</Text>
+                </View>
+              </TouchableOpacity>
               <View className="mt-2">
                 <ImageViewer
                   imgSource={{

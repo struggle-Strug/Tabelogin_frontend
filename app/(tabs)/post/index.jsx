@@ -4,11 +4,16 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  TextInput,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { Camera, CameraType } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import * as ImagePicker from "expo-image-picker";
 import CustomButton from "@/components/CustomButton";
 import ImageViewer from "@/components/ImageViewer";
 import { router } from "expo-router";
+import axios from "axios";
 import { useAuth } from "@/contexts/AuthContext";
 import Step1 from "./step1";
 
@@ -18,6 +23,23 @@ const Post = () => {
   const [currentIndex, setCurrentIndex] = useState(0); // Track the currently visible image index
   const scrollViewRef = useRef(null); // Reference for the ScrollView
   const [step, setStep] = useState(1);
+  const [captureState, setCaptureState] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [type, setType] = useState("back");
+  const [flash, setFlash] = useState("off");
+  // const [imageArray, setImageArray] = useState([]); // Store images from the gallery
+  const [comment, setComment] = useState("");
+  const cameraRef = useRef(null);
+
+  const imageArray = [
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+    "http://142.132.202.228:7000/uploads/1745686442624.jpeg",
+  ];
 
   const handleNext = () => {
     if (selectedImageIndexes.length === 0) return;
@@ -30,18 +52,6 @@ const Post = () => {
     router.back();
   };
 
-  const imageArray = [
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Ffrontend-786d8f1f-1630-4e59-89ea-2d4f39b2cb20/ImagePicker/c8de197e-78af-420e-bf2c-93090b012faa.jpeg",
-  ];
-
   // Handle image selection and store the index
   const handleImageSelect = (index) => {
     const isSelected = selectedImageIndexes.includes(index);
@@ -50,6 +60,11 @@ const Post = () => {
     } else {
       setSelectedImageIndexes([...selectedImageIndexes, index]); // Add the selected index to the list
     }
+  };
+
+  const fetchImages = async () => {
+    const result = await MediaLibrary.getAssetsAsync({ photo });
+    // setImageArray(result);
   };
 
   // Handle ScrollView scroll and update the current index
@@ -130,38 +145,137 @@ const Post = () => {
     );
   };
 
+  const handlePost = async () => {
+    const contentData = {
+      user_id: user?.id,
+      title: "",
+      content: comment,
+    };
+    const response_1 = await axios.post(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/post`,
+      contentData
+    );
+    if (response_1.data.error) return;
+    const imageData = {
+      image_url: selectedImageIndexes.map((index) => imageArray[index]),
+      content_id: response_1.data.content.id,
+    };
+
+    const response_2 = await axios.post(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/image`,
+      imageData
+    );
+    if (response_2.data.error) return;
+    setComment("");
+    setSelectedImageIndexes([]);
+    setStep(1);
+    router.push("/home");
+  };
+
+  useEffect(() => {
+    if (captureState) {
+      (async () => {
+        MediaLibrary.requestPermissionsAsync();
+        const cameraStatus = await Camera.requestCameraPermissionsAsync();
+        setHasCameraPermission(cameraStatus.status === "granted");
+      })();
+    }
+    fetchImages();
+  }, [captureState]);
+
   return (
     <View className="flex-1">
-      <View className="border-b-[0.5px] flex-row justify-between p-4">
-        <CustomButton onPress={handleClose} iconName="x" />
-        <Text className="text-xl font-bold text-[#343434]">新規投稿</Text>
-        <CustomButton
-          onPress={handleNext}
-          title="次へ"
-          textStyles="font-bold text-[#003CFF]"
-        />
-      </View>
-
-      {/* Render selected images as a carousel */}
-      <View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          ref={scrollViewRef}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
-          <View style={{ flexDirection: "row", minHeight: 350 }}>
-            {renderSelectedImages()}
+      {captureState && (
+        <View className="flex-1">
+          <Camera
+            style={{ flex: 1 }}
+            type={type}
+            ref={cameraRef}
+            flashMode={flash}
+          >
+            <Text>qweqwe</Text>
+          </Camera>
+        </View>
+      )}
+      {!captureState && (
+        <>
+          <View className="border-b-[0.5px] flex-row justify-between p-4">
+            {step === 1 && <CustomButton onPress={handleClose} iconName="x" />}
+            {step === 2 && (
+              <CustomButton
+                onPress={() => setStep(1)}
+                title=""
+                iconName="chevron-left"
+              />
+            )}
+            <Text
+              className={`text-xl font-bold text-[#343434] ${
+                step === 2 && "w-full text-center pr-16"
+              }`}
+            >
+              新規投稿
+            </Text>
+            {step === 1 && (
+              <CustomButton
+                onPress={handleNext}
+                title="次へ"
+                textStyles="font-bold text-[#003CFF]"
+              />
+            )}
           </View>
-        </ScrollView>
-      </View>
 
-      {/* Render Slide Indicators */}
-      <View className="flex-row justify-center min-h-8">
-        {renderSlideIndicators()}
-      </View>
-      {step === 1 && <Step1 imageArray={imageArray} renderItem={renderItem} />}
+          {/* Render selected images as a carousel */}
+          <View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              ref={scrollViewRef}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+            >
+              <View style={{ flexDirection: "row", minHeight: 300 }}>
+                {renderSelectedImages()}
+              </View>
+            </ScrollView>
+          </View>
+
+          {/* Render Slide Indicators */}
+          <View className="flex-row justify-center min-h-8 mt-2">
+            {renderSlideIndicators()}
+          </View>
+
+          {step === 1 && (
+            <Step1
+              imageArray={imageArray}
+              renderItem={renderItem}
+              setCaptureState={setCaptureState}
+            />
+          )}
+          {step === 2 && (
+            <>
+              <View className="flex-col items-center w-full">
+                <TextInput
+                  value={comment}
+                  placeholder="コメントを追加"
+                  onChangeText={(value) => setComment(value)}
+                  className={`text-lg px-2 py-2 border-[1px]
+                      border-[#343434] bg-transparent
+                    w-[90%] min-h-60 rounded-md mt-2`}
+                  style={{ textAlignVertical: "top" }} // ✅ Add this to align text to the top
+                />
+                <CustomButton
+                  onPress={handlePost}
+                  iconName="plus-circle"
+                  iconColor="#fff"
+                  title="投稿"
+                  containerStyles="bg-primary rounded-full w-[90%] mt-8"
+                  textStyles="text-base text-center py-2 text-white"
+                />
+              </View>
+            </>
+          )}
+        </>
+      )}
     </View>
   );
 };

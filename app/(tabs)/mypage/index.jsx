@@ -11,15 +11,15 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function MyPage() {
   const { user } = useAuth();
   const imageArray = [
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
-    "http://142.132.202.228:5000/uploads/1742293745607.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
+    "http://142.132.202.228:5000/uploads/1741008866752.jpeg",
   ];
 
   // Render function for each image in the FlatList

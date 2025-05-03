@@ -56,7 +56,6 @@ const Home = () => {
   const closeCommentModal = () => {
     setCommentModalVisible(false);
   };
-
   return (
     <View className="flex-1 justify-start">
       <View className="mt-12 flex flex-row justify-center">

@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 export default function MyPage() {
   const { user } = useAuth();
   const [imageArray, setImageArray] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
 
   // Render function for each image in the FlatList
   const renderItem = ({ item }) => {
@@ -39,8 +40,21 @@ export default function MyPage() {
     }
   };
 
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/user/info/${user?.id}`
+      );
+      if (response.data.error) return;
+      setUserInfo(response.data);
+    } catch {
+      console.error("Error uploading image:", error);
+      return null;
+    }
+  };
   useEffect(() => {
     getImages();
+    getUserInfo();
   }, []);
   return (
     <View className="flex-1 justify-start">
@@ -72,15 +86,21 @@ export default function MyPage() {
           </TouchableOpacity>
         </View>
         <View className="flex-col pt-2 gap-2">
-          <Text className="text-base font-bold">taro yamada</Text>
+          <Text className="text-base font-bold">{user?.name}</Text>
           <View className="flex-row items-center">
-            <Text className="font-bold text-lg text-black">9 </Text>
+            <Text className="font-bold text-lg text-black">
+              {userInfo.content_count}
+            </Text>
             <Text className="text-base text-[#343434]">投稿</Text>
             <View className="w-4" />
-            <Text className="font-bold text-lg text-black">11 </Text>
+            <Text className="font-bold text-lg text-black">
+              {userInfo.follow_count}
+            </Text>
             <Text className="text-base text-[#343434]">フォロワー</Text>
             <View className="w-4" />
-            <Text className="font-bold text-lg text-black">13 </Text>
+            <Text className="font-bold text-lg text-black">
+              {userInfo.follower_count}
+            </Text>
             <Text className="text-base text-[#343434]">フォロー中</Text>
           </View>
         </View>

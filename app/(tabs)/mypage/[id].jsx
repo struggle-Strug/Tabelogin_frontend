@@ -12,9 +12,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const userProfile = () => {
+  const { user: authUser } = useAuth();
   const { id } = useLocalSearchParams();
   const [imageArray, setImageArray] = useState([]);
   const [user, setUser] = useState();
+  const [followStatus, setFollowStatus] = useState(false);
 
   // Render function for each image in the FlatList
   const renderItem = ({ item }) => {
@@ -54,9 +56,51 @@ const userProfile = () => {
     }
   };
 
+  const follow = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/follow`,
+        { follow_id: id, follower_id: authUser?.id }
+      );
+      if (response.data.error) return;
+      setFollowStatus(true);
+    } catch {
+      console.error("Error uploading image:", error);
+      return null;
+    }
+  };
+
+  const unfollow = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/follow/unfollow`,
+        { follow_id: id, follower_id: authUser?.id }
+      );
+      if (response.data.error) return;
+      setFollowStatus(false);
+    } catch {
+      console.error("Error uploading image:", error);
+      return null;
+    }
+  };
+
+  const checkFollowStatus = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/follow/check/${id}`
+      );
+      if (response.data.error) return;
+      setFollowStatus(response.data.follow_status);
+    } catch {
+      console.error("Error uploading image:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     getImages();
     getUserData();
+    checkFollowStatus();
   }, []);
   return (
     <View className="flex-1 justify-start">
@@ -106,12 +150,16 @@ const userProfile = () => {
           自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。自己紹介文が入ります。
         </Text>
         <CustomButton
-          onPress={() => {}}
-          title="フォロー"
-          iconColor="white"
-          iconName="user-plus" // Pass the desired icon name (from Feather or other libraries)
-          containerStyles="rounded-full border-2 border-[#343434] px-4 py-2 mt-4 bg-black"
-          textStyles="text-white text-center"
+          onPress={() => (followStatus ? unfollow() : follow())}
+          title={followStatus ? "フォロー中" : "フォロー"}
+          iconColor={followStatus ? "black" : "white"}
+          iconName={followStatus ? "user-check" : "user-plus"} // Pass the desired icon name (from Feather or other libraries)
+          containerStyles={`rounded-full border-2 border-[#343434] px-4 py-2 mt-4 ${
+            followStatus ? "bg-white" : "bg-black"
+          }`}
+          textStyles={`text-center ${
+            followStatus ? "text-black" : "text-white"
+          }`}
         />
       </View>
 

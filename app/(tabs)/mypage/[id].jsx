@@ -16,6 +16,7 @@ const userProfile = () => {
   const { id } = useLocalSearchParams();
   const [imageArray, setImageArray] = useState([]);
   const [user, setUser] = useState();
+  const [userInfo, setUserInfo] = useState();
   const [followStatus, setFollowStatus] = useState(false);
 
   // Render function for each image in the FlatList
@@ -86,11 +87,26 @@ const userProfile = () => {
 
   const checkFollowStatus = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/follow/check/${id}`
+      const response = await axios.post(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/follow/check`,
+        { follow_id: id, follower_id: authUser?.id }
       );
       if (response.data.error) return;
       setFollowStatus(response.data.follow_status);
+      console.log(response.data.follow_status);
+    } catch {
+      console.error("Error uploading image:", error);
+      return null;
+    }
+  };
+
+  const getUserInfo = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/v1/user/info/${id}`
+      );
+      if (response.data.error) return;
+      setUserInfo(response.data);
     } catch {
       console.error("Error uploading image:", error);
       return null;
@@ -101,6 +117,7 @@ const userProfile = () => {
     getImages();
     getUserData();
     checkFollowStatus();
+    getUserInfo();
   }, []);
   return (
     <View className="flex-1 justify-start">
@@ -132,15 +149,21 @@ const userProfile = () => {
           </TouchableOpacity>
         </View>
         <View className="flex-col pt-2 gap-2">
-          <Text className="text-base font-bold">taro yamada</Text>
+          <Text className="text-base font-bold">{user?.name}</Text>
           <View className="flex-row items-center">
-            <Text className="font-bold text-lg text-black">9 </Text>
+            <Text className="font-bold text-lg text-black">
+              {userInfo?.content_count}
+            </Text>
             <Text className="text-base text-[#343434]">投稿</Text>
             <View className="w-4" />
-            <Text className="font-bold text-lg text-black">11 </Text>
+            <Text className="font-bold text-lg text-black">
+              {userInfo?.follower_count}
+            </Text>
             <Text className="text-base text-[#343434]">フォロワー</Text>
             <View className="w-4" />
-            <Text className="font-bold text-lg text-black">13 </Text>
+            <Text className="font-bold text-lg text-black">
+              {userInfo?.follow_count}
+            </Text>
             <Text className="text-base text-[#343434]">フォロー中</Text>
           </View>
         </View>

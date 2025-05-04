@@ -89,17 +89,17 @@ export default function MyPage() {
           <Text className="text-base font-bold">{user?.name}</Text>
           <View className="flex-row items-center">
             <Text className="font-bold text-lg text-black">
-              {userInfo.content_count}
+              {userInfo?.content_count}
             </Text>
             <Text className="text-base text-[#343434]">投稿</Text>
             <View className="w-4" />
             <Text className="font-bold text-lg text-black">
-              {userInfo.follow_count}
+              {userInfo?.follow_count}
             </Text>
             <Text className="text-base text-[#343434]">フォロワー</Text>
             <View className="w-4" />
             <Text className="font-bold text-lg text-black">
-              {userInfo.follower_count}
+              {userInfo?.follower_count}
             </Text>
             <Text className="text-base text-[#343434]">フォロー中</Text>
           </View>
